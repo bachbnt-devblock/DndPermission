@@ -23,9 +23,9 @@ class MainActivity: FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor, "crossingthestreams.io/resourceResolver").setMethodCallHandler { call: MethodCall, result: MethodChannel.Result ->
-            if ("drawableToUri" == call.method) {
-                val resourceId = this@MainActivity.resources.getIdentifier(call.arguments as String, "drawable", this@MainActivity.packageName)
-                result.success(resourceToUriString(this@MainActivity.applicationContext, resourceId))
+            if ("getServiceData" == call.method) {
+                var data="This is service data"
+                result.success(data)
             }
             if ("getNotificationUri" == call.method) {
                 result.success(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString())
