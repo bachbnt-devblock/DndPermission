@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dnd/flutter_dnd.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:volume/volume.dart';
 
 void main() => runApp(App());
 
@@ -88,6 +89,19 @@ class _HomeState extends State<Home> with AfterLayoutMixin<Home> {
         context, MaterialPageRoute(builder: (context) => NewScreen()));
   }
 
+  Future<void> initAudioStreamType() async {
+    await Volume.controlVolume(AudioManager.STREAM_NOTIFICATION);
+  }
+
+  Future<void> setMaxVol()async{
+      int maxVol = await Volume.getMaxVol;
+      await Volume.setVol(maxVol, showVolumeUI: ShowVolumeUI.HIDE);
+  }
+
+  Future<void> setMinVol()async{
+    await Volume.setVol(0, showVolumeUI: ShowVolumeUI.HIDE);
+  }
+
   Future<void> pushNotificationWithoutSound() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'channel id', 'channel name', 'channel description',
@@ -120,6 +134,8 @@ class _HomeState extends State<Home> with AfterLayoutMixin<Home> {
     IOSNotificationDetails(presentSound: false);
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    if((await Volume.getVol)==0)
+      await setMaxVol();
     await flutterLocalNotificationsPlugin.show(
         0, 'title', 'body', platformChannelSpecifics);
   }
@@ -134,6 +150,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin<Home> {
         initializationSettingsAndroid, initializationSettingsIOS);
     await flutterLocalNotificationsPlugin.initialize(
         initializationSettings, onSelectNotification: selectNotification);
+    await initAudioStreamType();
   }
 }
 
