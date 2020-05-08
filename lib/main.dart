@@ -72,6 +72,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin<Home> {
   }
 
   Future<void> requestPermission()async{
+    FlutterDnd.gotoPolicySettings();
     isNotificationPolicyAccessGranted= await FlutterDnd.isNotificationPolicyAccessGranted;
   }
 
