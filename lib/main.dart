@@ -27,7 +27,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with AfterLayoutMixin<Home> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final MethodChannel platform = MethodChannel('crossingthestreams.io/resourceResolver');
-  bool isNotificationPolicyAccessGranted;
+  bool isNotificationPolicyAccessGranted=false;
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +43,7 @@ class _HomeState extends State<Home> with AfterLayoutMixin<Home> {
           children: <Widget>[
             RaisedButton(
               child: Text("Request permission"),
-              onPressed: turnOffDND,
-            ),
-            RaisedButton(
-              child: Text("Turn off DND"),
-              onPressed: turnOffDND,
+              onPressed: requestPermission,
             ),
             RaisedButton(
               child: Text("Turn off DND"),
@@ -71,25 +67,20 @@ class _HomeState extends State<Home> with AfterLayoutMixin<Home> {
     );
   }
 
-  Future<void> requestPermission()async{
+  void requestPermission(){
     FlutterDnd.gotoPolicySettings();
-    isNotificationPolicyAccessGranted= await FlutterDnd.isNotificationPolicyAccessGranted;
   }
 
   Future<void> turnOffDND() async {
-    if (isNotificationPolicyAccessGranted)
+    if (await FlutterDnd.isNotificationPolicyAccessGranted)
       await FlutterDnd.setInterruptionFilter(
           FlutterDnd.INTERRUPTION_FILTER_ALL);
-    else
-      FlutterDnd.gotoPolicySettings();
   }
 
   Future<void> turnOnDND() async {
-    if (isNotificationPolicyAccessGranted)
+    if (await FlutterDnd.isNotificationPolicyAccessGranted)
       await FlutterDnd.setInterruptionFilter(
           FlutterDnd.INTERRUPTION_FILTER_NONE);
-    else
-      FlutterDnd.gotoPolicySettings();
   }
 
   Future<void> selectNotification(String payload) async {
